@@ -3,6 +3,7 @@ package com.duoc.backend;
 import com.duoc.backend.medication.Medication;
 import com.duoc.backend.medication.MedicationController;
 import com.duoc.backend.medication.MedicationRepository;
+import com.duoc.backend.medication.MedicationRequest;
 import com.duoc.backend.medication.MedicationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,9 +73,9 @@ class MedicationPackageTest {
     /** Verifica que el guardado retorne el medicamento persistido por el repositorio. */
     @Test
     void testSaveMedication() {
-        when(repository.save(medication)).thenReturn(medication);
+        when(repository.save(any(Medication.class))).thenReturn(medication);
 
-        assertSame(medication, controller.saveMedication(medication));
+        assertSame(medication, controller.saveMedication(new MedicationRequest("Antiparasitario", 12000.0)));
     }
 
     /** Verifica que la eliminación invoque deleteById con el id recibido. */

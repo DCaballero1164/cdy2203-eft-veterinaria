@@ -14,6 +14,10 @@ public class Medication {
     private Double cost;
 
 
+    // Constructor sin argumentos requerido por JPA
+    public Medication() {
+    }
+
     public Medication(String name, double price) {
         this.name = name;
         this.cost = price;

@@ -15,11 +15,15 @@ import static com.duoc.backend.Constants.*;
 @Configuration
 public class JWTAuthenticationConfig {
 
+    private final JwtSecretProvider jwtSecretProvider;
+
+    public JWTAuthenticationConfig(JwtSecretProvider jwtSecretProvider) {
+        this.jwtSecretProvider = jwtSecretProvider;
+    }
+
     public String getJWTToken(String username) {
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
                 .commaSeparatedStringToAuthorityList("ROLE_USER");
-
-
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("authorities", grantedAuthorities.stream()
@@ -31,12 +35,12 @@ public class JWTAuthenticationConfig {
                 .add(claims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1440))
+                .expiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME))
                 .and()
-                .signWith(getSigningKey(SUPER_SECRET_KEY))
+                .signWith(jwtSecretProvider.getSigningKey())
                 .compact();
 
-        return "Bearer " + token;
+        return TOKEN_BEARER_PREFIX + token;
     }
 
 }

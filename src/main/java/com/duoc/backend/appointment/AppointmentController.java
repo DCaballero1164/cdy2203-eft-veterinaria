@@ -1,5 +1,6 @@
 package com.duoc.backend.appointment;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,8 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public Appointment saveAppointment(@RequestBody Appointment appointment) {
-        return appointmentService.saveAppointment(appointment);
+    public Appointment saveAppointment(@Valid @RequestBody AppointmentRequest request) {
+        return appointmentService.saveAppointment(request.toEntity());
     }
 
     @DeleteMapping("/{id}")

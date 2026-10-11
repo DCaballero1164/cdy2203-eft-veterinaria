@@ -7,6 +7,7 @@ import org.mockito.MockitoAnnotations;
 import com.duoc.backend.patient.PatientService;
 import com.duoc.backend.patient.PatientController;
 import com.duoc.backend.patient.Patient;
+import com.duoc.backend.patient.PatientRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -90,14 +91,15 @@ class PatientControllerTest {
         patient.setAge(5);
         patient.setOwner("Juan Pérez");
 
-        when(patientService.savePatient(patient)).thenReturn(patient);
+        when(patientService.savePatient(any(Patient.class))).thenReturn(patient);
+        PatientRequest request = new PatientRequest("Firulais", "Perro", "Labrador", 5, "Juan Pérez");
 
         // Act
-        Patient result = patientController.savePatient(patient);
+        Patient result = patientController.savePatient(request);
 
         // Assert
         assertEquals("Firulais", result.getName());
-        verify(patientService, times(1)).savePatient(patient);
+        verify(patientService, times(1)).savePatient(any(Patient.class));
     }
 
     @Test

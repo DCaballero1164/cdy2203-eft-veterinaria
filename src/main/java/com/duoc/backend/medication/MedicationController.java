@@ -1,5 +1,6 @@
 package com.duoc.backend.medication;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,8 @@ public class MedicationController {
     }
 
     @PostMapping
-    public Medication saveMedication(@RequestBody Medication medication) {
-        return medicationService.saveMedication(medication);
+    public Medication saveMedication(@Valid @RequestBody MedicationRequest request) {
+        return medicationService.saveMedication(request.toEntity());
     }
 
     @DeleteMapping("/{id}")

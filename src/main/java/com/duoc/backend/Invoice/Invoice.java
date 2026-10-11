@@ -37,6 +37,10 @@ public class Invoice {
 
     private Double totalCost;
 
+    // Constructor sin argumentos requerido por JPA
+    public Invoice() {
+    }
+
     public Invoice(Long id, String patientName, LocalDate date, List<Care> cares, List<Medication> medications) {
         this.id = id;
         this.patientName = patientName;

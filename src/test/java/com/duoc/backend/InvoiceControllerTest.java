@@ -2,6 +2,7 @@ package com.duoc.backend;
 
 import com.duoc.backend.Invoice.Invoice;
 import com.duoc.backend.Invoice.InvoiceController;
+import com.duoc.backend.Invoice.InvoiceRequest;
 import com.duoc.backend.Invoice.InvoiceService;
 import com.duoc.backend.care.Care;
 import com.duoc.backend.medication.Medication;
@@ -72,15 +73,16 @@ class InvoiceControllerTest {
         // Arrange
         LocalDate date1 = LocalDate.parse("2025-04-28");
         Invoice invoice = new Invoice(1L, "Patient1", date1, Arrays.asList(), Arrays.asList());
-        when(invoiceService.saveInvoice(invoice)).thenReturn(invoice);
+        when(invoiceService.saveInvoice(any(Invoice.class))).thenReturn(invoice);
+        InvoiceRequest request = new InvoiceRequest("Patient1", date1, null, List.of(), List.of());
 
         // Act
-        Invoice result = invoiceController.saveInvoice(invoice);
+        Invoice result = invoiceController.saveInvoice(request);
 
         // Assert
         assertNotNull(result);
         assertEquals(1L, result.getId());
-        verify(invoiceService, times(1)).saveInvoice(invoice);
+        verify(invoiceService, times(1)).saveInvoice(any(Invoice.class));
     }
 
     @Test

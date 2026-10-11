@@ -1,5 +1,6 @@
 package com.duoc.backend.care;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,8 @@ public class CareController {
     }
 
     @PostMapping
-    public Care saveCare(@RequestBody Care service) {
-        return careRepository.save(service);
+    public Care saveCare(@Valid @RequestBody CareRequest request) {
+        return careRepository.save(request.toEntity());
     }
 
     @DeleteMapping("/{id}")

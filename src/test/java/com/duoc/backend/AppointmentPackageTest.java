@@ -3,6 +3,7 @@ package com.duoc.backend;
 import com.duoc.backend.appointment.Appointment;
 import com.duoc.backend.appointment.AppointmentController;
 import com.duoc.backend.appointment.AppointmentRepository;
+import com.duoc.backend.appointment.AppointmentRequest;
 import com.duoc.backend.appointment.AppointmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,10 +84,12 @@ class AppointmentPackageTest {
     /** Verifica que el guardado delegue en el repositorio y retorne la cita guardada. */
     @Test
     void testSaveAppointment() {
-        when(repository.save(appointment)).thenReturn(appointment);
+        when(repository.save(any(Appointment.class))).thenReturn(appointment);
+        AppointmentRequest request = new AppointmentRequest(
+                LocalDate.of(2025, 10, 5), LocalTime.of(10, 30), "Vacunacion", "Dra. Soto");
 
-        assertSame(appointment, controller.saveAppointment(appointment));
-        verify(repository, times(1)).save(appointment);
+        assertSame(appointment, controller.saveAppointment(request));
+        verify(repository, times(1)).save(any(Appointment.class));
     }
 
     /** Verifica que la eliminación invoque deleteById con el id recibido. */

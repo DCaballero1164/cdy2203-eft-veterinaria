@@ -15,49 +15,50 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.crypto.SecretKey;
-
 import static com.duoc.backend.Constants.*;
 
 @Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
+
+    private final JwtSecretProvider jwtSecretProvider;
+
+    public JWTAuthorizationFilter(JwtSecretProvider jwtSecretProvider) {
+        this.jwtSecretProvider = jwtSecretProvider;
+    }
 
     private Claims setSigningKey(HttpServletRequest request) {
         String jwtToken = request.
                 getHeader(HEADER_AUTHORIZACION_KEY).
                 replace(TOKEN_BEARER_PREFIX, "");
 
-                return Jwts.parser()
-                .verifyWith((SecretKey) getSigningKey(SUPER_SECRET_KEY))
+        return Jwts.parser()
+                .verifyWith(jwtSecretProvider.getSigningKey())
                 .build()
                 .parseSignedClaims(jwtToken)
                 .getPayload();
-
     }
 
     private void setAuthentication(Claims claims) {
 
-        List<String> authorities = (List<String>) claims.get("authorities");
+        List<?> authorities = claims.get("authorities", List.class);
 
         UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
-                authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+                authorities.stream().map(a -> new SimpleGrantedAuthority(String.valueOf(a))).collect(Collectors.toList()));
 
         SecurityContextHolder.getContext().setAuthentication(auth);
 
     }
 
-    private boolean isJWTValid(HttpServletRequest request, HttpServletResponse res) {
+    private boolean isJWTValid(HttpServletRequest request) {
         String authenticationHeader = request.getHeader(HEADER_AUTHORIZACION_KEY);
-        if (authenticationHeader == null || !authenticationHeader.startsWith(TOKEN_BEARER_PREFIX))
-            return false;
-        return true;
+        return authenticationHeader != null && authenticationHeader.startsWith(TOKEN_BEARER_PREFIX);
     }
 
     @Override
     protected void doFilterInternal(@SuppressWarnings("null") HttpServletRequest request, @SuppressWarnings("null") HttpServletResponse response, @SuppressWarnings("null") FilterChain filterChain) throws ServletException, IOException {
         try {
-            if (isJWTValid(request, response)) {
+            if (isJWTValid(request)) {
                 Claims claims = setSigningKey(request);
                 if (claims.get("authorities") != null) {
                     setAuthentication(claims);
@@ -67,12 +68,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             } else {
                 SecurityContextHolder.clearContext();
             }
-            filterChain.doFilter(request, response);
-        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+        } catch (JwtException | IllegalArgumentException e) {
+            // Token expirado, mal formado o con firma inválida (incluye SignatureException):
+            // se responde 401 sin detallar la causa al cliente.
+            SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+        filterChain.doFilter(request, response);
     }
 
 }

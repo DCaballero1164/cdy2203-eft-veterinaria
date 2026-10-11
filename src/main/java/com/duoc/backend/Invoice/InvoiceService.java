@@ -62,6 +62,9 @@ public class InvoiceService {
                 .mapToDouble(Medication::getCost)
                 .sum();
 
+        // Se asocian las entidades leídas desde la BD, no las recibidas del cliente
+        invoice.setCares(validCares);
+        invoice.setMedications(validMedications);
         invoice.setTotalCost(totalCareCost + totalMedicationCost);
 
         // Guardar la factura en el repositorio

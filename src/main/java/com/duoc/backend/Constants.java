@@ -1,9 +1,4 @@
 package com.duoc.backend;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
 
 public class Constants {
 
@@ -13,18 +8,12 @@ public class Constants {
     public static final String TOKEN_BEARER_PREFIX = "Bearer ";
 
     // JWT
+    // La clave de firma ya no se escribe en el código: se lee de la variable de entorno
+    // JWT_SECRET a través de JwtSecretProvider (corrección del hallazgo CWE-798).
     public static final String ISSUER_INFO = "https://www.duocuc.cl/";
-    public static final String SUPER_SECRET_KEY = "ZnJhc2VzbGFyZ2FzcGFyYWNvbG9jYXJjb21vY2xhdmVlbnVucHJvamVjdG9kZWVtZXBsb3BhcmFqd3Rjb25zcHJpbmdzZWN1cml0eQ==bWlwcnVlYmFkZWVqbXBsb3BhcmFiYXNlNjQ=";
-    public static final long TOKEN_EXPIRATION_TIME = 864_000_000; // 1 day
+    public static final long TOKEN_EXPIRATION_TIME = 86_400_000; // 1 día
 
-    public static Key getSigningKeyB64(String secret) {
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    public static Key getSigningKey(String secret) {
-        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
+    private Constants() {
     }
 
 }

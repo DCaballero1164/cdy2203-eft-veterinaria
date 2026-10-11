@@ -61,6 +61,7 @@ class HttpRequestTest {
         ResponseEntity<String> response = restTemplate.postForEntity(baseUrl, request, String.class);
 
         // Assert
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        // Con credenciales inválidas el login responde 401, sin revelar si el usuario existe
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 }

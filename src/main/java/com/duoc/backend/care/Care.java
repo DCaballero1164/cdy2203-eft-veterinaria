@@ -13,6 +13,10 @@ public class Care {
     private String name;
     private Double cost;
 
+    // Constructor sin argumentos requerido por JPA
+    public Care() {
+    }
+
     public Care(String description, double cost) {
         this.name = description;
         this.cost = cost;

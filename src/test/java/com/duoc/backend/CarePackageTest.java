@@ -3,6 +3,7 @@ package com.duoc.backend;
 import com.duoc.backend.care.Care;
 import com.duoc.backend.care.CareController;
 import com.duoc.backend.care.CareRepository;
+import com.duoc.backend.care.CareRequest;
 import com.duoc.backend.care.CareService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class CarePackageTest {
         care.setId(1L);
         when(repository.findAll()).thenReturn(List.of(care));
         when(repository.findById(1L)).thenReturn(Optional.of(care));
-        when(repository.save(care)).thenReturn(care);
+        when(repository.save(any(Care.class))).thenReturn(care);
     }
 
     /** Verifica que la entidad conserve los valores asignados por sus setters. */
@@ -74,7 +75,7 @@ class CarePackageTest {
     void testControllerCrud() {
         assertEquals(1, controller.getAllCares().size());
         assertSame(care, controller.getCareById(1L));
-        assertSame(care, controller.saveCare(care));
+        assertSame(care, controller.saveCare(new CareRequest("Consulta general", 15000.0)));
         controller.deleteCare(1L);
 
         verify(repository, times(1)).deleteById(1L);
