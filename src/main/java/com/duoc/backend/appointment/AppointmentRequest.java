@@ -1,6 +1,7 @@
 package com.duoc.backend.appointment;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -10,8 +11,8 @@ import java.time.LocalTime;
 public record AppointmentRequest(
         @NotNull LocalDate date,
         @NotNull LocalTime time,
-        @NotBlank String reason,
-        @NotBlank String veterinarian) {
+        @NotBlank @Size(max = 255) String reason,
+        @NotBlank @Size(max = 255) String veterinarian) {
 
     public Appointment toEntity() {
         Appointment appointment = new Appointment();

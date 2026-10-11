@@ -5,6 +5,7 @@ import com.duoc.backend.medication.Medication;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ import java.util.List;
  * Los cuidados y medicamentos se reciben solo por su id; el costo total lo calcula el servicio.
  */
 public record InvoiceRequest(
-        @NotBlank String patientName,
+        @NotBlank @Size(max = 255) String patientName,
         @NotNull LocalDate date,
         LocalTime time,
         List<@Valid ItemRef> cares,
